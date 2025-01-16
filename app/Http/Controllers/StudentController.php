@@ -23,26 +23,23 @@ class StudentController extends Controller
 
    public function index()
    {
-       // Read the JSON file
+
        $json = Storage::get('anomalous_students.json');
        $anomalous_students = json_decode($json, true);
 
-       // Log the data to Laravel's default log file
-       Log::info('Anomalous students data retrieved:', ['anomalous_students' => $anomalous_students]);
 
-       // Initialize an array to store complete student data with all marks
+       //Log::info('Anomalous students data retrieved:', ['anomalous_students' => $anomalous_students]);
+
        $students_data = [];
 
        foreach ($anomalous_students as $anomalous_student) {
-           // Get student_id from anomalous student data
+
            $student_id = $anomalous_student['student_id'];
 
-           // Retrieve all marks for the student from the database excluding the anomalous mark
            $student_marks = Mark::where('student_id', $student_id)
                                 ->where('id', '!=', $anomalous_student['id'])
                                 ->get();
 
-           // Map the results to format the data as needed
            $all_marks = $student_marks->map(function ($mark) {
                return [
                    'id' => $mark->id,
@@ -63,7 +60,7 @@ class StudentController extends Controller
                    'subject_id' => $anomalous_student['subject_id'],
                    'marks_original' => $anomalous_student['marks_original'],
                    'teacher_id' => $anomalous_student['teacher_id'],
-                   // Add any other relevant fields from anomalous_student here
+
                ],
                'all_marks' => $all_marks->toArray(),
            ];
